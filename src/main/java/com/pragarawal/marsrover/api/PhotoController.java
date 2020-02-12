@@ -6,12 +6,7 @@ import com.pragarawal.marsrover.service.PhotoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.ParseException;
-
-/**
- *
- */
-@RequestMapping("photo")
+@RequestMapping("photos")
 @RestController
 public class PhotoController {
 
@@ -26,6 +21,11 @@ public class PhotoController {
     @GetMapping(path = "{date}")
     public Photo getPhotoByDate(@PathVariable("date") String date) throws DateParseException {
         return photoService.getPhotoByDate(date);
+    }
+
+    @GetMapping
+    public void downloadPhotosFromFile() {
+        photoService.downloadPhotosFromFile();
     }
 
 }
