@@ -13,7 +13,11 @@ import org.springframework.web.client.RestClientException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -21,6 +25,8 @@ import java.util.Date;
 @Service
 public class PhotoService {
 
+    private static final String IMAGE_PATH = "%s/photos/image/%s";
+    private static final String BASE_URL_PROPERTY = "BASE_URL";
     private static final String[] DATE_FORMATS = {
             "MM/dd/yy",
             "MMM dd, yyyy",
@@ -35,8 +41,7 @@ public class PhotoService {
     }
 
     public Photo getPhotoByDate(String date) throws DateParseException, RestClientException {
-        String formattedDate = formatDate(date);
-        return photoClient.getPhotosForDate(formattedDate);
+        return downloadImageFromNASA(date);
     }
 
     public void downloadPhotosFromFile() throws DateParseException, RestClientException {
@@ -44,16 +49,47 @@ public class PhotoService {
         try {
             dates = readDatesFromFile("dates.txt");
         } catch (IOException e) {
-            logger.error("Failed to read dates.txt", e);
+            logger.error("failed to read dates.txt", e);
             return;
         }
 
         for (String date : dates) {
-            String formattedDate = formatDate(date);
-            Photo photo = photoClient.getPhotosForDate(formattedDate);
+            downloadImageFromNASA(date);
         }
     }
 
+    /**
+     * Downloads a Mars rover image from the NASA API for the given date, and stores it
+     * in the local resources directory to serve to our clients.
+     *
+     * @param date the [unformatted] date for which to download the NASA image
+     * @return the Photo object with a URL pointing to the newly, locally cached image.
+     * @throws DateParseException if the given date is formatted incorrectly.
+     */
+    private Photo downloadImageFromNASA(String date) throws DateParseException {
+        String formattedDate = formatDate(date);
+        String imgSrc = photoClient.getFirstPhotoForDate(formattedDate);
+        ClassLoader classLoader = getClass().getClassLoader();
+
+        try {
+            InputStream in = new URL(imgSrc).openStream();
+            Files.copy(in, Paths.get(classLoader.getResource(".").getFile() + formattedDate + ".jpeg"), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            logger.error("failed to download image", e);
+            return null;
+        }
+
+        String imgUrl = String.format(IMAGE_PATH, System.getenv(BASE_URL_PROPERTY), formattedDate + ".jpeg");
+        return new Photo(formattedDate, imgUrl);
+    }
+
+    /**
+     * Reads values (presumed to be dates) from the given file. Reads one date per line.
+     *
+     * @param fileName the file, assumed to be in the resources directory
+     * @return an array of string values read from the file
+     * @throws IOException
+     */
     public static String[] readDatesFromFile(String fileName) throws IOException {
         Resource resource = new ClassPathResource(fileName);
         InputStream inputStream = resource.getInputStream();

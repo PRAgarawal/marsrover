@@ -47,7 +47,6 @@ public class PhotoController {
     @RequestMapping(path = "image/{fileName}", method = RequestMethod.GET,
             produces = MediaType.IMAGE_JPEG_VALUE)
     public void streamImage(@PathVariable("fileName") String fileName, HttpServletResponse response) throws IOException {
-        System.out.println(fileName);
         var imgFile = new ClassPathResource(fileName);
 
         response.setContentType(MediaType.IMAGE_JPEG_VALUE);
