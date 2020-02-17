@@ -2,6 +2,8 @@ package com.pragarawal.marsrover.service;
 
 import com.pragarawal.marsrover.model.Photo;
 import com.pragarawal.marsrover.nasa.NASARoverPhotoClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -25,6 +27,7 @@ public class PhotoService {
             "MMM-dd-yyyy",
     };
     private NASARoverPhotoClient photoClient;
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     public PhotoService() {
@@ -36,10 +39,18 @@ public class PhotoService {
         return photoClient.getPhotosForDate(formattedDate);
     }
 
-    public void downloadPhotosFromFile() throws IOException {
-        String[] dates = readDatesFromFile("dates.txt");
+    public void downloadPhotosFromFile() throws DateParseException, RestClientException {
+        String[] dates;
+        try {
+            dates = readDatesFromFile("dates.txt");
+        } catch (IOException e) {
+            logger.error("Failed to read dates.txt", e);
+            return;
+        }
 
         for (String date : dates) {
+            String formattedDate = formatDate(date);
+            Photo photo = photoClient.getPhotosForDate(formattedDate);
         }
     }
 
