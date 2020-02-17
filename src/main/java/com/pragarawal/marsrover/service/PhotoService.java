@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.ParseException;
@@ -70,13 +71,18 @@ public class PhotoService {
         String formattedDate = formatDate(date);
         String imgSrc = photoClient.getFirstPhotoForDate(formattedDate);
         ClassLoader classLoader = getClass().getClassLoader();
+        Path path = Paths.get(classLoader.getResource(".").getFile() + formattedDate + ".jpeg");
 
-        try {
-            InputStream in = new URL(imgSrc).openStream();
-            Files.copy(in, Paths.get(classLoader.getResource(".").getFile() + formattedDate + ".jpeg"), StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            logger.error("failed to download image", e);
-            return null;
+        // Use a cached file if possible
+        if (Files.notExists(path)) {
+            logger.info("creating new file: " + formattedDate + ".jpeg");
+            try {
+                InputStream in = new URL(imgSrc).openStream();
+                Files.copy(in, Paths.get(classLoader.getResource(".").getFile() + formattedDate + ".jpeg"));
+            } catch (IOException e) {
+                logger.error("failed to download image", e);
+                return null;
+            }
         }
 
         String imgUrl = String.format(IMAGE_PATH, System.getenv(BASE_URL_PROPERTY), formattedDate + ".jpeg");
@@ -99,8 +105,16 @@ public class PhotoService {
         return data.split("\n");
     }
 
-    public static String formatDate(String dateAsString) throws DateParseException {
-        Date date = parseDateWithFormatterIndex(dateAsString, 0);
+    /**
+     * Takes an unformatted date string and formats it into the form YYYY-MM-DD.
+     *
+     * @param rawDate the unformatted date
+     * @return the formatted date
+     * @throws DateParseException will be thrown for malformed dates that can't be
+     * normalized
+     */
+    public static String formatDate(String rawDate) throws DateParseException {
+        Date date = parseDateWithFormatterIndex(rawDate, 0);
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         return formatter.format(date);
     }
