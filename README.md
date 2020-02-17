@@ -16,9 +16,24 @@ This is a simple demo application that collects photos from the [public NASA API
         "date": "2018-06-02",
         "url": "http://localhost:8080/photos/image/2018-06-02.jpeg"
     }
+   
+   If no images are found for the given date, the `url` field will be empty. 
 
-### Instructions for running
+### Running the app
 Two environment variables are necessary in order for the application to run properly:
-- `BASE_URL`: This is the base URL of the application. Unless this is deployed remotely, this should typically be set to `http://localhost:8080`
+- `BASE_URL`: This is the base URL of the application. Unless this is deployed remotely, this should typically be set to `http://localhost:8080`, which is also the default value.
 - `NASA_API_KEY`: Any API key generated on [the NASA website](https://api.nasa.gov/).
 
+#### Running directly
+Build and run with Maven from the root directory of the project:
+`./mvnw package && java -jar target/marsrover-0.0.1-SNAPSHOT.jar`
+
+#### Running as a Docker container
+First build a local Docker image with:
+`./mvnw com.google.cloud.tools:jib-maven-plugin:dockerBuild -Dimage=marsrover`
+
+Then run the image with:
+`docker run -p 8080:8080 -e "NASA_API_KEY=<API key>" -t marsrover`
+
+### Potential enhancements
+1. Make the responses JSONAPI compliant rather than just rendering an isolated JSON object.
