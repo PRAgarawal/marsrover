@@ -3,18 +3,16 @@ package com.pragarawal.marsrover.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotBlank;
-import java.util.Date;
 
 public class Photo {
 
-    @NotBlank
-    private final String formattedDate;
+    @JsonProperty("date")
+    private String formattedDate;
 
-    @NotBlank
-    private final String url;
+    @JsonProperty("url")
+    private String url;
 
-    public Photo(@JsonProperty("date") String date,
-                 @JsonProperty("url") String url) {
+    public Photo(String date, String url) {
         this.formattedDate = date;
         this.url = url;
     }

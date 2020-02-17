@@ -1,13 +1,13 @@
 package com.pragarawal.marsrover.service;
 
 import com.pragarawal.marsrover.model.Photo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.pragarawal.marsrover.nasa.NASARoverPhotoClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.web.client.RestClientException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,32 +19,32 @@ import java.util.Date;
 @Service
 public class PhotoService {
 
-    final Logger LOGGER = LoggerFactory.getLogger(getClass());
-
-    private static final String DATE_FORMATS[] = {
+    private static final String[] DATE_FORMATS = {
             "MM/dd/yy",
             "MMM dd, yyyy",
             "MMM-dd-yyyy",
     };
+    private NASARoverPhotoClient photoClient;
 
     @Autowired
     public PhotoService() {
+        this.photoClient = new NASARoverPhotoClient();
     }
 
-    public Photo getPhotoByDate(String date) throws DateParseException {
-        return new Photo(normalizeDate(date), "test");
+    public Photo getPhotoByDate(String date) throws DateParseException, RestClientException {
+        String formattedDate = formatDate(date);
+        return photoClient.getPhotosForDate(formattedDate);
     }
 
-    public void downloadPhotosFromFile() {
-        try {
-            String[] dates = readDatesFromFile();
-        } catch (IOException e) {
-            LOGGER.error("IOException", e);
+    public void downloadPhotosFromFile() throws IOException {
+        String[] dates = readDatesFromFile("dates.txt");
+
+        for (String date : dates) {
         }
     }
 
-    public String[] readDatesFromFile() throws IOException {
-        Resource resource = new ClassPathResource("dates.txt");
+    public String[] readDatesFromFile(String fileName) throws IOException {
+        Resource resource = new ClassPathResource(fileName);
         InputStream inputStream = resource.getInputStream();
         byte[] bdata = FileCopyUtils.copyToByteArray(inputStream);
         String data = new String(bdata, StandardCharsets.UTF_8);
@@ -52,7 +52,7 @@ public class PhotoService {
         return data.split("\n");
     }
 
-    public static String normalizeDate(String dateAsString) throws DateParseException {
+    public static String formatDate(String dateAsString) throws DateParseException {
         Date date = parseDateWithFormatterIndex(dateAsString, 0);
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         return formatter.format(date);
@@ -67,8 +67,6 @@ public class PhotoService {
 
         try {
             date = formatter.parse(dateAsString);
-            System.out.println(date);
-            System.out.println(formatter.format(date));
         } catch (ParseException e) {
             return parseDateWithFormatterIndex(dateAsString, index+1);
         }

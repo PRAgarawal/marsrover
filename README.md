@@ -3,7 +3,7 @@
 This is a simple demo application that collects photos from the [public NASA API](https://api.nasa.gov/) with two server endpoints.
 
 1. `GET <service URL>/photos/` 
-    Will download a single randomly chosen image collected by the Mars Rover on each of the dates specified in the dates.txt file.
+    Will download the first image returned by the Mars Rover on each of the dates specified in the dates.txt file, and render a link to them.
 
 2. `GET <service URL>/photos/<date>`
     Will render a single randomly chosen image URL from the date specified in the `date` URL parameter. Dates must be of one of the following formats, or a parse exception will be thrown:

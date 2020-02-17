@@ -6,6 +6,8 @@ import com.pragarawal.marsrover.service.PhotoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RequestMapping("photos")
 @RestController
 public class PhotoController {
@@ -24,7 +26,7 @@ public class PhotoController {
     }
 
     @GetMapping
-    public void downloadPhotosFromFile() {
+    public void downloadPhotosFromFile() throws IOException {
         photoService.downloadPhotosFromFile();
     }
 
