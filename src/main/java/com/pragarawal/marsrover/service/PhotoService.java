@@ -43,7 +43,7 @@ public class PhotoService {
         }
     }
 
-    public String[] readDatesFromFile(String fileName) throws IOException {
+    public static String[] readDatesFromFile(String fileName) throws IOException {
         Resource resource = new ClassPathResource(fileName);
         InputStream inputStream = resource.getInputStream();
         byte[] bdata = FileCopyUtils.copyToByteArray(inputStream);
