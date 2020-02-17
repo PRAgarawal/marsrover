@@ -2,6 +2,7 @@ package com.pragarawal.marsrover.service;
 
 import com.pragarawal.marsrover.model.Photo;
 import com.pragarawal.marsrover.nasa.NASARoverPhotoClient;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.client.RestClientException;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -28,6 +28,7 @@ public class PhotoService {
 
     private static final String IMAGE_PATH = "%s/photos/image/%s";
     private static final String BASE_URL_PROPERTY = "BASE_URL";
+    private static final String BASE_URL_DEFAULT = "http://localhost:8080";
     private static final String[] DATE_FORMATS = {
             "MM/dd/yy",
             "MMM dd, yyyy",
@@ -84,15 +85,33 @@ public class PhotoService {
             logger.info("creating new file: " + formattedDate + ".jpeg");
             try {
                 InputStream in = new URL(imgSrc).openStream();
-                Files.copy(in, path);
+                File targetFile = new File(formattedDate + ".jpeg");
+                java.nio.file.Files.copy(in, targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                IOUtils.closeQuietly(in);
             } catch (IOException e) {
                 logger.error("failed to download image", e);
                 return null;
             }
         }
 
-        String imgUrl = String.format(IMAGE_PATH, System.getenv(BASE_URL_PROPERTY), formattedDate + ".jpeg");
+        String imgUrl = String.format(IMAGE_PATH, getBaseUrl(), formattedDate + ".jpeg");
         return new Photo(formattedDate, imgUrl);
+    }
+
+    /**
+     * Get the base URL from the environment, or the default (localhost) if none is
+     * configured.
+     *
+     * TODO: Is there a better/more Spring-canonical way of using the environment?
+     * @return
+     */
+    private static String getBaseUrl() {
+        String baseUrl = System.getenv(BASE_URL_PROPERTY);
+        if (baseUrl == null) {
+            return BASE_URL_DEFAULT;
+        }
+
+        return baseUrl;
     }
 
     /**

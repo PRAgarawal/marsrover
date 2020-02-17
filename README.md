@@ -17,14 +17,14 @@ This is a simple demo application that collects photos from the [public NASA API
         "url": "http://localhost:8080/photos/image/2018-06-02.jpeg"
     }
    
-   If no images are found for the given date, the `url` field will be empty. 
+   If no images are found for the given date, the `url` field will be an empty string. 
 
 ### Running the app
-Two environment variables are necessary in order for the application to run properly:
+Two environment variables should be configured in order for the application to run properly:
 - `BASE_URL`: This is the base URL of the application. Unless this is deployed remotely, this should typically be set to `http://localhost:8080`, which is also the default value.
 - `NASA_API_KEY`: Any API key generated on [the NASA website](https://api.nasa.gov/).
 
-#### Running directly
+#### Running the JAR directly
 Build and run with Maven from the root directory of the project:
 `./mvnw package && java -jar target/marsrover-0.0.1-SNAPSHOT.jar`
 
@@ -35,5 +35,9 @@ First build a local Docker image with:
 Then run the image with:
 `docker run -p 8080:8080 -e "NASA_API_KEY=<API key>" -t marsrover`
 
-### Potential enhancements
+### Areas for improvement
 1. Make the responses JSONAPI compliant rather than just rendering an isolated JSON object.
+2. Better error handling. I'm no Spring or Java expert (yet), but it can't be healthy to just throw almost every exception up the stack. There are some exceptions (such as `DateParseException`) that should be rendered as client errors, for example.
+3. Integration tests. Not familiar with the best frameworks for that. Maybe Selenium if I get the client code working? But even lower layer tests that may require mocking out the NASA client, in ways I don't yet know how to do in the Java world, could be valuable.
+
+... And given how long I've been out of the Java/OOP world, probably lots more.

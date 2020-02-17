@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClientException;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 @RequestMapping("photos")
@@ -47,10 +49,10 @@ public class PhotoController {
     @RequestMapping(path = "image/{fileName}", method = RequestMethod.GET,
             produces = MediaType.IMAGE_JPEG_VALUE)
     public void streamImage(@PathVariable("fileName") String fileName, HttpServletResponse response) throws IOException {
-        var imgFile = new ClassPathResource(fileName);
+        File imgFile = new File(fileName);
 
         response.setContentType(MediaType.IMAGE_JPEG_VALUE);
-        StreamUtils.copy(imgFile.getInputStream(), response.getOutputStream());
+        StreamUtils.copy(new FileInputStream(imgFile), response.getOutputStream());
     }
 
 }
