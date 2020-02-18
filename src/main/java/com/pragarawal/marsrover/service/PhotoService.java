@@ -71,12 +71,6 @@ public class PhotoService {
      */
     private Photo downloadImageFromNASA(String date) throws DateParseException, RestClientException {
         String formattedDate = formatDate(date);
-        String imgSrc = photoClient.getFirstPhotoForDate(formattedDate);
-
-        if (imgSrc == null || imgSrc.length() == 0) {
-            return new Photo(formattedDate, "");
-        }
-
         ClassLoader classLoader = getClass().getClassLoader();
         String url = classLoader.getResourceAsStream(".") + formattedDate + ".jpeg";
         Path path = Paths.get(url);
@@ -84,6 +78,13 @@ public class PhotoService {
         // Use a cached file if possible
         if (Files.notExists(path)) {
             logger.info("creating new file: " + formattedDate + ".jpeg");
+            String imgSrc = photoClient.getFirstPhotoForDate(formattedDate);
+
+            if (imgSrc == null || imgSrc.length() == 0) {
+                return new Photo(formattedDate, "");
+            }
+
+            // Download the image from the NASA-provided URL
             try {
                 InputStream in = new URL(imgSrc).openStream();
                 File targetFile = new File(formattedDate + ".jpeg");
