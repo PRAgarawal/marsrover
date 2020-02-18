@@ -15,12 +15,6 @@ class App extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  async componentDidMount() {
-    // const response = await fetch('/photos/2018-06-02');
-    // const body = await response.json();
-    // this.setState({ photo: body, isLoading: false });
-  }
-
   handleChange(event) {
     const target = event.target;
     const value = target.value;
@@ -35,12 +29,12 @@ class App extends Component {
     if (photo.date) {
       const response = await fetch('/photos/' + photo.date);
       const body = await response.json();
-      this.setState({photo: body, isLoading: false});
+      this.setState({photo: body, isLoading: false, notFound: !body.url});
     }
   }
 
   render() {
-    const {photo, isLoading} = this.state;
+    const {photo, isLoading, notFound} = this.state;
 
     if (isLoading) {
       return <p>Loading...</p>;
@@ -60,23 +54,33 @@ class App extends Component {
                 placeholder="Date"/>
             </FormGroup>
           </Form>
-          {photo.error ?
-              (
-                <div className="App-intro">
-                  Error loading image: {photo.error}
-                </div>
-              ) : null
-          }
           {photo.url ?
             (
               <div className="App-intro">
                 <img alt="NASA mars rover" src={photo.url}/>
               </div>
-            ) : (
+            ) : null
+          }
+          {notFound && !photo.error ?
+            (
+              <div className="App-intro">
+                No image found for selected date
+              </div>
+            ) : null
+          }
+          {!notFound && !photo.error ?
+            (
               <div className="App-intro">
                 Input a date and hit enter
               </div>
-            )
+            ) : null
+          }
+          {photo.error ?
+            (
+              <div className="App-intro">
+                Error loading image: {photo.error}
+              </div>
+            ) : null
           }
         </header>
       </div>
