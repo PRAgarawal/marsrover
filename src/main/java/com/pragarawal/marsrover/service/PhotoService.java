@@ -33,6 +33,7 @@ public class PhotoService {
             "MM/dd/yy",
             "MMM dd, yyyy",
             "MMM-dd-yyyy",
+            "yyyy-MM-dd"
     };
     private NASARoverPhotoClient photoClient;
     private final Logger logger = LoggerFactory.getLogger(getClass());

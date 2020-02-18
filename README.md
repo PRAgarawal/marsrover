@@ -9,8 +9,9 @@ This is a simple demo application that collects photos from the [public NASA API
      - `MM/dd/yy` (ex: 02/26/98)
      - `MMM dd, yyyy` (ex: February 26, 1998)
      - `MMM-dd-yyyy` (ex: Feb-26-1998)
+     - `yyyy-MM-dd` (ex: 1998-02-26)
      
-     Sample response for a GET on `http://localhost:8080/photos/June 2, 2018`:
+     Dates in the response will always be returned in the normalized format that NASA accepts (yyyy-MM-dd). Sample response for a GET on `http://localhost:8080/photos/June 2, 2018`:
      ```
    {
         "date": "2018-06-02",
@@ -39,5 +40,6 @@ Then run the image with:
 1. Make the responses JSONAPI compliant rather than just rendering an isolated JSON object.
 2. Better error handling. I'm no Spring or Java expert (yet), but it can't be healthy to just throw almost every exception up the stack. There are some exceptions (such as `DateParseException`) that should be rendered as client errors, for example.
 3. Integration tests. Not familiar with the best frameworks for that. Maybe Selenium if I get the client code working? But even lower layer tests that may require mocking out the NASA client, in ways I don't yet know how to do in the Java world, could be valuable.
+4. Probably goes without saying, but would be better to store images on a third party service like GCS or AWS rather than loading up our container.
 
 ... And given how long I've been out of the Java/OOP world, probably lots more.

@@ -33,3 +33,6 @@ build/
 ### Temporary assets ###
 *.jpeg
 
+### Frontend build assets
+/src/ui/node_modules/
+
