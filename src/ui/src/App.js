@@ -11,19 +11,17 @@ class App extends Component {
     this.state = {
       photo: this.emptyPhoto,
     };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleChange(event) {
+  handleChange = (event) => {
     const target = event.target;
     const value = target.value;
     let photo = {...this.state.photo};
     photo.date = value;
     this.setState({photo});
-  }
+  };
 
-  async handleSubmit(event) {
+  handleSubmit = async (event) => {
     event.preventDefault();
     const {photo} = this.state;
     if (photo.date) {
@@ -31,13 +29,22 @@ class App extends Component {
       const body = await response.json();
       this.setState({photo: body, isLoading: false, notFound: !body.url});
     }
-  }
+  };
 
   render() {
     const {photo, isLoading, notFound} = this.state;
 
     if (isLoading) {
       return <p>Loading...</p>;
+    }
+
+    let appIntroContent;
+    if(notFound && !photo.error) {
+      appIntroContent = "No image found for selected date";
+    } else if (!notFound && !photo.error) {
+      appIntroContent = "Input a date and hit enter";
+    } else if (photo.error) {
+      appIntroContent = `Error loading image: ${photo.error}`
     }
 
     return (
@@ -54,34 +61,16 @@ class App extends Component {
                 placeholder="Date"/>
             </FormGroup>
           </Form>
-          {photo.url ?
-            (
-              <div className="App-intro">
-                <img alt="NASA mars rover" src={photo.url}/>
-              </div>
-            ) : null
-          }
-          {notFound && !photo.error ?
-            (
-              <div className="App-intro">
-                No image found for selected date
-              </div>
-            ) : null
-          }
-          {!notFound && !photo.error ?
-            (
-              <div className="App-intro">
-                Input a date and hit enter
-              </div>
-            ) : null
-          }
-          {photo.error ?
-            (
-              <div className="App-intro">
-                Error loading image: {photo.error}
-              </div>
-            ) : null
-          }
+          {photo.url && (
+            <div className="App-intro">
+              <img alt="NASA mars rover" src={photo.url}/>
+            </div>
+          )}
+          {appIntroContent && !photo.url && (
+            <div className="App-intro">
+              {appIntroContent}
+            </div>
+          )}
         </header>
       </div>
     );

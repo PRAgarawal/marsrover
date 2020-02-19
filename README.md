@@ -17,8 +17,10 @@ This is a simple demo application that collects photos from the [public NASA API
         "date": "2018-06-02",
         "url": "http://localhost:8080/photos/image/2018-06-02.jpeg"
     }
+   ```
+   If no images are found for the given date, the `url` field will be an empty string.
    
-   If no images are found for the given date, the `url` field will be an empty string. 
+You can also access the application via a react UI available at <base_url>/ 
 
 ### Running the app
 Two environment variables should be configured in order for the application to run properly:
