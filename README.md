@@ -24,7 +24,7 @@ You can also access the application via a react UI available at <base_url>/
 
 ### Running the service
 #### Prerequisites
-If you don't already have them, you will need to install
+If you don't already have them, you will need to install the following:
 - Maven
 - A Java 11 runtime
 - Docker
@@ -46,7 +46,7 @@ Then run the image with:
 
 ### Running the UI
 #### Prerequisites
-If you don't already have them, you will need to install:
+If you don't already have them, you will need to install the following:
 - yarn
 - node
 
@@ -54,7 +54,7 @@ If you don't already have them, you will need to install:
 The UI does not run as part of the container or jar. These are the steps to use it:
 1. Make sure you have the backend service running and exposed locally on port 8080 (either of the directions above for running as a jar or running in a container should do the trick).
 2. `cd` to the ui directory (`src/ui`), and run `yarn install` to install the necessary node modules. Grab a Snickers.
-3. Run `yarn start`. This should compile assets and then launch a browser tab at `http://localhost:3000.
+3. Run `yarn start`. This should compile assets and then launch a browser tab at `http://localhost:3000`.
 4. Have fun exploring NASA Mars rover images!
 
 ### Areas for improvement
