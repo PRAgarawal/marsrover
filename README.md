@@ -20,7 +20,7 @@ This is a simple demo application that collects photos from the [public NASA API
    ```
    If no images are found for the given date, the `url` field will be an empty string.
    
-You can also access the application via a react UI available at <base_url>/ 
+Separately, there is also a React UI included in this repo that you can build and run to interface with this simple API in a web browser.
 
 ### Running the service
 #### Prerequisites
