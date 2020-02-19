@@ -23,6 +23,12 @@ This is a simple demo application that collects photos from the [public NASA API
 You can also access the application via a react UI available at <base_url>/ 
 
 ### Running the service
+#### Prerequisites
+If you don't already have them, you will need to install
+- Maven
+- A Java 11 runtime
+- Docker
+
 Two environment variables should be configured in order for the application to run properly:
 - `BASE_URL`: This is the base URL of the application. Unless this is deployed remotely, this should typically be set to `http://localhost:8080`, which is also the default value.
 - `NASA_API_KEY`: Any API key generated on [the NASA website](https://api.nasa.gov/).
@@ -39,7 +45,17 @@ Then run the image with:
 `docker run -p 8080:8080 -e "NASA_API_KEY=<API key>" -t marsrover`
 
 ### Running the UI
-The UI does not run as part of the container or jar. If you'd like to use the frontend, first make sure you have the backend service running and exposed locally on port 8080 (either of directions above for running as a jar or running in a container should do the trick). Then `cd` to the ui directory (`src/ui`), then run `yarn start`. This should download dependencies, compile assets, and launch a browser tab at `http://localhost:3000`... Then have fun exploring NASA Mars rover images!
+#### Prerequisites
+If you don't already have them, you will need to install:
+- yarn
+- node
+
+#### Build and run
+The UI does not run as part of the container or jar. These are the steps to use it:
+1. Make sure you have the backend service running and exposed locally on port 8080 (either of the directions above for running as a jar or running in a container should do the trick).
+2. `cd` to the ui directory (`src/ui`), and run `yarn install` to install the necessary node modules. Grab a Snickers.
+3. Run `yarn start`. This should compile assets and then launch a browser tab at `http://localhost:3000.
+4. Have fun exploring NASA Mars rover images!
 
 ### Areas for improvement
 1. Make the responses JSONAPI compliant rather than just rendering an isolated JSON object.
