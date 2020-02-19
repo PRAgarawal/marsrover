@@ -1,4 +1,4 @@
-## Mars Rover Sprint Boot Application
+## Mars Rover Spring Boot Application
 This is a simple demo application that collects photos from the [public NASA API](https://api.nasa.gov/) with two server endpoints.
 
 1. `GET <service URL>/photos/` 
