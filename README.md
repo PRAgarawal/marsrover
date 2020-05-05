@@ -1,3 +1,5 @@
+This project was written as a solution for LA1's [programming exercise](https://github.com/hawkescom/marsrover).
+
 ## Mars Rover Spring Boot Application
 This is a simple demo application that collects photos from the [public NASA API](https://api.nasa.gov/) with two server endpoints.
 
